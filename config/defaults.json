@@ -1,0 +1,91 @@
+{
+  "profile": "LOW_RESOURCE_CPU",
+  "general": {
+    "start_with_windows": false,
+    "show_floating_widget": true,
+    "widget_position": [20, 120],
+    "theme": "dark",
+    "startup_behavior": "start_in_background",
+    "agent_name": "Luna",
+    "user_name": ""
+  },
+  "character": {
+    "enabled": true,
+    "preset": "luna",
+    "scale": 1.0,
+    "offset": [-30, -190]
+  },
+  "voice_input": {
+    "microphone": null,
+    "stt_engine": "whisper",
+    "whisper_model": "small",
+    "language": "en",
+    "cpu_threads": 0,
+    "vad_sensitivity": 0.5,
+    "silence_duration": 0.8,
+    "minimum_speech_duration": 0.3,
+    "maximum_recording_duration": 60,
+    "sample_rate": 16000
+  },
+  "voice_output": {
+    "speaker": null,
+    "tts_engine": "kokoro",
+    "kokoro_voice": "af_heart",
+    "piper_voice": "en_US-lessac-medium",
+    "speed": 1.0,
+    "volume": 1.0
+  },
+  "llm": {
+    "host": "http://127.0.0.1:11434",
+    "connectivity": "hybrid",
+    "provider": "ollama",
+    "provider_model": "",
+    "local_model": "qwen3.5:4b",
+    "local_model_choices": [
+      "qwen3.5:0.8b", "qwen3.5:2b", "qwen3.5:4b", "qwen3.5:9b", "qwen3.5:27b",
+      "gemma4:e2b", "gemma4:e4b", "gemma4:12b", "nemotron-3-nano:4b"
+    ],
+    "use_cloud_models": true,
+    "cloud_model": "deepseek-v4-flash:cloud",
+    "cloud_model_choices": [
+      "gemma4:cloud", "gemma4:31b-cloud", "deepseek-v4-flash:cloud",
+      "glm-5.2:cloud", "glm-5.1:cloud", "minimax-m2.7:cloud", "minimax-m3:cloud",
+      "qwen3.5:cloud", "qwen3.5:397b-cloud", "nemotron-3-nano:30b-cloud"
+    ],
+    "api_keys": {
+      "openai": "",
+      "groq": "",
+      "openrouter": ""
+    },
+    "context_size": 4096,
+    "temperature": 0.2,
+    "keep_alive": "10m",
+    "timeout": 120,
+    "tools_enabled": true
+  },
+  "hotkeys": {
+    "push_to_talk": ["ctrl", "win"],
+    "auto_stop": ["ctrl", "win", "space"],
+    "interrupt": ["ctrl", "win"]
+  },
+  "memory": {
+    "enabled": true,
+    "retention_days": 365,
+    "max_context_memories": 5
+  },
+  "tools": {
+    "shell_enabled": false,
+    "confirm_destructive": true,
+    "default_confirmation": "ask"
+  },
+  "performance": {
+    "whisper_threads": 0,
+    "max_worker_threads": 4,
+    "tts_cache_size": 16,
+    "resource_poll_interval_s": 5
+  },
+  "debug": {
+    "save_recordings": false,
+    "recordings_dir": ""
+  }
+}

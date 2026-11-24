@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.spec.bak
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local data (never commit)
+data/
+logs/
+models/
+config/local.json
+
+# PyInstaller
+build/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+Thumbs.db
+Desktop.ini
