@@ -1,0 +1,71 @@
+--- a/app/application.py
++++ b/app/application.py
+@@ -126,6 +126,8 @@
+         from app.config import Settings
+ 
+         self.settings = Settings()
++        saved_mode = str(self.settings.get("general.assistant_mode", "general")).lower()
++        self.assistant_mode = saved_mode if saved_mode in {"general", "university"} else "general"
+         self.bus = EventBus()
+         self.state = StateMachine(self.bus)
+         self.state.add_listener(self._on_state_changed)
+@@ -165,6 +167,12 @@
+ 
+         self._build_tools()
+         self._build_agent()
++
++        # University mode is an optional, local FAQ-only layer. It does not
++        # replace AgentRuntime and does not send university questions to the
++        # LLM when the FAQ cannot support an answer.
++        from university.assistant import UniversityAssistant
++        self.university_assistant = UniversityAssistant(processor=self.processor)
+ 
+         # Engines (lazy — loaded on first use).
+         self.stt = None
+@@ -769,7 +777,25 @@
+                     log.info("[KOKORO SPEAKING] %s", sentence)
+                     self.tts_manager.speak(sentence)
+ 
+-            final = self.agent.run(transcript, on_sentence=on_sentence)
++            # Explicit spoken commands switch between the existing general
++            # agent and the university Wi-Fi help desk. The selected mode is
++            # persisted in Settings and restored on the next launch.
++            from university.assistant import detect_mode_command
++            requested_mode = detect_mode_command(transcript)
++            if requested_mode is not None:
++                self._set_assistant_mode(requested_mode)
++                label = "University Help Desk" if requested_mode == "university" else "General Assistant"
++                final = f"Switched to {label} mode."
++                for sentence in self.processor.split_sentences(final):
++                    on_sentence(sentence)
++            elif self.assistant_mode == "university":
++                # FAQ-only response path: unsupported questions are handled
++                # safely by UniversityAssistant rather than guessed by Ollama.
++                final = self.university_assistant.answer(transcript)
++                for sentence in self.processor.split_sentences(final):
++                    on_sentence(sentence)
++            else:
++                final = self.agent.run(transcript, on_sentence=on_sentence)
+             self.memory.add_message("assistant", final)
+             # Do NOT drop to IDLE yet: sentences may still be queued or
+             # playing (first Kokoro load alone can take seconds). Wait until
+@@ -800,6 +826,19 @@
+             log.exception("pipeline failed")
+             self._fail("pipeline", str(exc))
+ 
++    def _set_assistant_mode(self, mode: str) -> None:
++        """Switch assistant persona and persist the choice."""
++        if mode not in {"general", "university"}:
++            raise ValueError(f"Unsupported assistant mode: {mode}")
++        self.assistant_mode = mode
++        try:
++            self.settings.set("general.assistant_mode", mode)
++            self.settings.save()
++        except Exception:  # noqa: BLE001
++            # Keep the current session usable even if settings persistence fails.
++            log.exception("Could not persist assistant mode %s", mode)
++        log.info("Assistant mode changed to %s", mode)
++
+     def _finish_turn(self, was_continuous: bool) -> None:
+         """Settle after a processed utterance. Continuous (auto-stop)
+         sessions resume listening immediately; push-to-talk ends in IDLE."""
