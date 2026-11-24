@@ -534,6 +534,11 @@ class VoiceAgentApplication(QApplication):
         t.act_show_hide.triggered.connect(self._toggle_widget)
         t.act_settings.triggered.connect(self._open_settings)
         t.act_history.triggered.connect(self._open_history)
+        t.act_general_mode.triggered.connect(
+            lambda _checked=False: self._set_assistant_mode("general"))
+        t.act_university_mode.triggered.connect(
+            lambda _checked=False: self._set_assistant_mode("university"))
+        t.set_assistant_mode(self.assistant_mode)
         t.act_enable_voice.triggered.connect(self._enable_voice)
         t.act_disable_voice.triggered.connect(self._disable_voice)
         t.act_reload_models.triggered.connect(self._reload_models)
@@ -604,6 +609,15 @@ class VoiceAgentApplication(QApplication):
         self.agent.router = self.router
         self._apply_character_settings()
         self.hotkeys.reset_keys()
+        # SettingsDialog persists the selected mode; apply it immediately and
+        # keep the tray's exclusive actions synchronized.
+        selected_mode = str(
+            self.settings.get("general.assistant_mode", "general")
+        ).lower()
+        if selected_mode not in {"general", "university"}:
+            selected_mode = "general"
+        self.assistant_mode = selected_mode
+        self.tray.set_assistant_mode(selected_mode)
 
     def _apply_character_settings(self) -> None:
         """Apply Character page changes live: preset, size, visibility."""
@@ -837,6 +851,9 @@ class VoiceAgentApplication(QApplication):
         except Exception:  # noqa: BLE001
             # Keep the current session usable even if settings persistence fails.
             log.exception("Could not persist assistant mode %s", mode)
+        tray = getattr(self, "tray", None)
+        if tray is not None:
+            tray.set_assistant_mode(mode)
         log.info("Assistant mode changed to %s", mode)
 
     def _finish_turn(self, was_continuous: bool) -> None:

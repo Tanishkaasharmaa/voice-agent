@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtGui import QAction, QActionGroup, QIcon
 from PySide6.QtWidgets import QMenu, QSystemTrayIcon
 
 
@@ -18,6 +18,24 @@ class SystemTray:
         self.menu.addAction(self.act_show_hide)
         self.menu.addAction(self.act_settings)
         self.menu.addAction(self.act_history)
+        self.menu.addSeparator()
+
+        # Assistant mode is selectable from the tray as well as Settings.
+        self.mode_menu = QMenu("Assistant Mode")
+        self.mode_group = QActionGroup(self.mode_menu)
+        self.mode_group.setExclusive(True)
+        self.act_general_mode = QAction("General assistant", self.mode_menu)
+        self.act_general_mode.setCheckable(True)
+        self.act_general_mode.setData("general")
+        self.act_university_mode = QAction("University help desk", self.mode_menu)
+        self.act_university_mode.setCheckable(True)
+        self.act_university_mode.setData("university")
+        self.mode_group.addAction(self.act_general_mode)
+        self.mode_group.addAction(self.act_university_mode)
+        self.mode_menu.addAction(self.act_general_mode)
+        self.mode_menu.addAction(self.act_university_mode)
+        self.menu.addMenu(self.mode_menu)
+        self.set_assistant_mode("general")
         self.menu.addSeparator()
 
         self.act_enable_voice = QAction("Enable Voice")
@@ -44,10 +62,17 @@ class SystemTray:
         self.tray.setContextMenu(self.menu)
         self.tray.activated.connect(self._on_activated)
 
+    def set_assistant_mode(self, mode: str) -> None:
+        """Reflect the current mode in the exclusive tray menu."""
+        mode = mode if mode in {"general", "university"} else "general"
+        self.act_general_mode.setChecked(mode == "general")
+        self.act_university_mode.setChecked(mode == "university")
+
     def _on_activated(self, reason) -> None:
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
-            if self.tray.activated_callback:
-                self.tray.activated_callback()
+            callback = getattr(self.tray, "activated_callback", None)
+            if callback:
+                callback()
 
     def show(self) -> None:
         self.tray.show()

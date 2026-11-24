@@ -3,17 +3,24 @@
   "general": {
     "start_with_windows": false,
     "show_floating_widget": true,
-    "widget_position": [20, 120],
+    "widget_position": [
+      20,
+      120
+    ],
     "theme": "dark",
     "startup_behavior": "start_in_background",
     "agent_name": "Luna",
-    "user_name": ""
+    "user_name": "",
+    "assistant_mode": "general"
   },
   "character": {
     "enabled": true,
     "preset": "luna",
     "scale": 1.0,
-    "offset": [-30, -190]
+    "offset": [
+      -30,
+      -190
+    ]
   },
   "voice_input": {
     "microphone": null,
@@ -42,15 +49,29 @@
     "provider_model": "",
     "local_model": "qwen3.5:4b",
     "local_model_choices": [
-      "qwen3.5:0.8b", "qwen3.5:2b", "qwen3.5:4b", "qwen3.5:9b", "qwen3.5:27b",
-      "gemma4:e2b", "gemma4:e4b", "gemma4:12b", "nemotron-3-nano:4b"
+      "qwen3.5:0.8b",
+      "qwen3.5:2b",
+      "qwen3.5:4b",
+      "qwen3.5:9b",
+      "qwen3.5:27b",
+      "gemma4:e2b",
+      "gemma4:e4b",
+      "gemma4:12b",
+      "nemotron-3-nano:4b"
     ],
     "use_cloud_models": true,
     "cloud_model": "deepseek-v4-flash:cloud",
     "cloud_model_choices": [
-      "gemma4:cloud", "gemma4:31b-cloud", "deepseek-v4-flash:cloud",
-      "glm-5.2:cloud", "glm-5.1:cloud", "minimax-m2.7:cloud", "minimax-m3:cloud",
-      "qwen3.5:cloud", "qwen3.5:397b-cloud", "nemotron-3-nano:30b-cloud"
+      "gemma4:cloud",
+      "gemma4:31b-cloud",
+      "deepseek-v4-flash:cloud",
+      "glm-5.2:cloud",
+      "glm-5.1:cloud",
+      "minimax-m2.7:cloud",
+      "minimax-m3:cloud",
+      "qwen3.5:cloud",
+      "qwen3.5:397b-cloud",
+      "nemotron-3-nano:30b-cloud"
     ],
     "api_keys": {
       "openai": "",
@@ -64,9 +85,19 @@
     "tools_enabled": true
   },
   "hotkeys": {
-    "push_to_talk": ["ctrl", "win"],
-    "auto_stop": ["ctrl", "win", "space"],
-    "interrupt": ["ctrl", "win"]
+    "push_to_talk": [
+      "ctrl",
+      "win"
+    ],
+    "auto_stop": [
+      "ctrl",
+      "win",
+      "space"
+    ],
+    "interrupt": [
+      "ctrl",
+      "win"
+    ]
   },
   "memory": {
     "enabled": true,

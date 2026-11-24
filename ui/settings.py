@@ -236,9 +236,16 @@ class SettingsDialog(QDialog):
         self._select_current(self.cmb_agent_name, s.get("general.agent_name", "Luna"))
         self.ed_user_name = QLineEdit(s.get("general.user_name", ""))
         self.ed_user_name.setPlaceholderText("e.g. Alex")
+        self.cmb_assistant_mode = QComboBox()
+        self.cmb_assistant_mode.addItem("General assistant", "general")
+        self.cmb_assistant_mode.addItem("University help desk", "university")
+        saved_mode = str(s.get("general.assistant_mode", "general")).lower()
+        mode_index = self.cmb_assistant_mode.findData(saved_mode)
+        self.cmb_assistant_mode.setCurrentIndex(max(0, mode_index))
         self._add_tab("General", [
             ("Assistant name", self.cmb_agent_name),
             ("What it calls you", self.ed_user_name),
+            ("Assistant mode", self.cmb_assistant_mode),
             ("Start with Windows", self.chk_start_with_windows),
             ("Show floating widget", self.chk_show_widget),
             ("Theme", self.cmb_theme),
@@ -490,6 +497,7 @@ class SettingsDialog(QDialog):
                 "theme": self.cmb_theme.currentText(),
                 "agent_name": self.cmb_agent_name.currentText().strip() or "Luna",
                 "user_name": self.ed_user_name.text().strip(),
+                "assistant_mode": self.cmb_assistant_mode.currentData() or "general",
             },
             "character": {
                 "preset": self.cmb_character.currentData() or "luna",
